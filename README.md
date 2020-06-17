@@ -25,7 +25,7 @@ Colorize your terminal output with pride!
 	Original 8-color rainbow flag designed by Gilbert Baker in 1978
 
 --lgbtpoc
-	POC-inclusive rainbow flag variation designed by the Philadelphia City Council in 2017
+	POC-inclusive rainbow flag designed by Philadelphia City Council in 2017
 
 --lipstick-lesbian,--pink-lesbian
 	Lipstick lesbian pride flag designed by Natalie McCray in 2010
