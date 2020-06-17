@@ -67,7 +67,7 @@ This depends on a recent (C++11) C++ compiler being available. If you encounter 
 
 ## Windows support?
 
-Not presently available. It might work out-of-the-box in WSL but this hasn't been tested.
+Not presently available. It appears to work out-of-the-box in WSL though.
 
 ## License
 
