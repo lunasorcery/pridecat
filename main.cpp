@@ -108,6 +108,7 @@ std::vector<std::string> g_filesToCat;
 unsigned int g_currentRow = 0;
 bool g_useColors = isatty(STDOUT_FILENO);
 bool g_trueColor = getenv("COLORTERM");
+bool g_setBackgroundColor = false;
 
 bool strEqual(char const* a, char const* b) {
 	return strcmp(a, b) == 0;
@@ -155,17 +156,20 @@ void setColor(color_t const& color) {
 	if (!g_useColors)
 		return;
 
+	int const command = g_setBackgroundColor ? 48 : 38;
+
 	if (g_trueColor) {
-		fprintf(stdout, "\033[38;2;%d;%d;%dm", color.r, color.g, color.b);
+		fprintf(stdout, "\033[%d;2;%d;%d;%dm", command, color.r, color.g, color.b);
 	} else {
 		// apparently the default macOS Terminal.app still needs this?? (as of 10.14 Mojave)
-		fprintf(stdout, "\033[38;5;%dm", bestNonTruecolorMatch(color));
+		fprintf(stdout, "\033[%d;5;%dm", command, bestNonTruecolorMatch(color));
 	}
 }
 
 void resetColor() {
 	if (g_useColors) {
-		fputs("\033[39m", stdout);
+		int const command = g_setBackgroundColor ? 49 : 39;
+		fprintf(stdout, "\033[%dm", command);
 	}
 }
 
@@ -200,6 +204,8 @@ void parseCommandLine(int argc, char** argv) {
 			}
 			
 			printf("Additional options:\n");
+			printf("  -b,--background\n");
+			printf("      Change the background color instead of the text color\n\n");
 			printf("  -f,--force\n");
 			printf("      Force color even when stdout is not a tty\n\n");
 			printf("  -t,--truecolor\n");
@@ -218,6 +224,9 @@ void parseCommandLine(int argc, char** argv) {
 		}
 		else if (strEqual(argv[i], "-t") || strEqual(argv[i], "--truecolor")) {
 			g_trueColor = true;
+		}
+		else if (strEqual(argv[i], "-b") || strEqual(argv[i], "--background")) {
+			g_setBackgroundColor = true;
 		}
 		else if (strEqual(argv[i], "--")) {
 			finishedReadingFlags = true;
@@ -251,6 +260,9 @@ void abortHandler(int signo) {
 void catFile(FILE* fh) {
 	int c;
 	while ((c = getc(fh)) >= 0) {
+		if (c == '\n') {
+			resetColor();
+		}
 		putc(c, stdout);
 		if (c == '\n') {
 			g_currentRow++;
