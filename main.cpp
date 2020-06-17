@@ -38,6 +38,12 @@ std::map<std::string, flag_t const> allFlags = {
 		"Original 8-color rainbow flag designed by Gilbert Baker in 1978"
 	} },
 
+	{ "lgbtpoc", {
+		// colors from https://en.wikipedia.org/wiki/File:Philadelphia_Pride_Flag.svg
+		{ 0x000000,0x784F17,0xE40303,0xFF8C00,0xFFED00,0x008026,0x004DFF,0x750787 },
+		"POC-inclusive rainbow flag designed by Philadelphia City Council in 2017"
+	} },
+
 	{ "transgender", { 
 		// colors from https://www.schemecolor.com/transgender-pride-flag-colors.php
 		{ 0x55CDFC,0xF7A8B8,0xFFFFFF,0xF7A8B8,0x55CDFC },
