@@ -3,11 +3,16 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
-#include <getopt.h>
 #include <vector>
 #include <map>
-#include <unistd.h>
 #include <signal.h>
+#if defined(_WIN32)
+#include <Windows.h>
+#include <io.h>
+#else
+#include <getopt.h>
+#include <unistd.h>
+#endif
 
 #define array_size(x) (sizeof(x)/sizeof(x[0]))
 
@@ -106,8 +111,15 @@ std::map<std::string, std::string> aliases = {
 std::vector<color_t> g_colorQueue;
 std::vector<std::string> g_filesToCat;
 unsigned int g_currentRow = 0;
+
+#if defined(_WIN32)
+bool g_useColors = _isatty(_fileno(stdout));
+bool g_trueColor = true;
+#else
 bool g_useColors = isatty(STDOUT_FILENO);
 bool g_trueColor = getenv("COLORTERM");
+#endif
+
 
 bool strEqual(char const* a, char const* b) {
 	return strcmp(a, b) == 0;
@@ -262,8 +274,36 @@ void catFile(FILE* fh) {
 	}
 }
 
+#if defined(_WIN32)
+bool tryEnableEscapeSequences()
+{
+	HANDLE const hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (hOut == INVALID_HANDLE_VALUE) {
+		return false;
+	}
+
+	DWORD dwMode = 0;
+	if (!GetConsoleMode(hOut, &dwMode)) {
+		return false;
+	}
+
+	dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+	if (!SetConsoleMode(hOut, dwMode)) {
+		return false;
+	}
+
+	return true;
+}
+#endif
+
 int main(int argc, char** argv) {
 	signal(SIGINT, abortHandler);
+
+#if defined(_WIN32)
+	if (!tryEnableEscapeSequences()) {
+		g_useColors = false;
+	}
+#endif
 
 	parseCommandLine(argc, argv);
 
