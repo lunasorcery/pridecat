@@ -6,6 +6,8 @@
 #include <getopt.h>
 #include <vector>
 #include <map>
+#include <unistd.h>
+#include <signal.h>
 
 #define array_size(x) (sizeof(x)/sizeof(x[0]))
 
