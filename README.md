@@ -70,7 +70,9 @@ This depends on a recent (C++11) C++ compiler being available. If you encounter 
 
 ## Windows support?
 
-Not presently available. It appears to work out-of-the-box in WSL though.
+There's currently no Windows-compatible build setup, but the code should work under the notable windows terminals if you compile it with cl.exe. Tested in cmd, PowerShell, and Windows Terminal.
+
+It also appears to work out-of-the-box in WSL.
 
 ## License
 
