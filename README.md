@@ -1,4 +1,4 @@
-# pridecat
+# 🏳️‍🌈 pridecat
 
 Like **cat**, but more colorful - inspired by [lolcat](https://github.com/busyloop/lolcat).
 
