@@ -341,6 +341,9 @@ void catFile(std::istream& fh) {
 			repeatedEmpty = true;
 			g_blankLines++;
 		}
+		else {
+			repeatedEmpty = false;
+		}
 		g_currentRow++;
 		setColor(g_colorQueue[g_currentRow % g_colorQueue.size()]);
 		if (g_numberLines) {
