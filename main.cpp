@@ -67,6 +67,12 @@ std::map<std::string, flag_t const> allFlags = {
 		"Asexual pride flag designed by AVEN user 'standup' in 2010"
 	} },
 
+	{ "aromantic", {
+		// colors from https://en.wikipedia.org/wiki/File:Aromantic_Pride_Flag.svg
+		{ 0x3DA542,0xA7D479,0xFFFFFF,0xA9A9A9,0x000000 },
+		"Aromantic pride flag linked by AVEN user 'Hamster' in 2015"
+	} },
+
 	{ "pansexual", {
 		// colors from https://www.schemecolor.com/pansexuality-flag-colors.php
 		{ 0xFF1B8D,0xFF1B8D,0xFFDA00,0xFFDA00,0x1BB3FF,0x1BB3FF, },
@@ -102,6 +108,7 @@ std::map<std::string, std::string> aliases = {
 	{ "trans", "transgender" },
 	{ "bi", "bisexual" },
 	{ "ace", "asexual" },
+	{ "aro", "aromantic" },
 	{ "pan", "pansexual" },
 	{ "nb", "nonbinary" },
 	{ "enby", "nonbinary" },
