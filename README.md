@@ -9,6 +9,9 @@ Colorize your terminal output with pride!
 ## Flags
 
 ```
+--aromantic,--aro
+	Aromantic pride flag linked by AVEN user 'Hamster' in 2015
+
 --asexual,--ace
 	Asexual pride flag designed by AVEN user 'standup' in 2010
 
