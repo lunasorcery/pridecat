@@ -123,8 +123,12 @@ unsigned int g_currentRow = 0;
 bool g_useColors = _isatty(_fileno(stdout));
 bool g_trueColor = true;
 #else
+bool isTrueColorTerminal() {
+	char const* ct = getenv("COLORTERM");
+	return ct ? strstr(ct, "truecolor") || strstr(ct, "24bit") : false;
+}
 bool g_useColors = isatty(STDOUT_FILENO);
-bool g_trueColor = getenv("COLORTERM");
+bool g_trueColor = isTrueColorTerminal();
 #endif
 
 
@@ -223,6 +227,8 @@ void parseCommandLine(int argc, char** argv) {
 			printf("      Force color even when stdout is not a tty\n\n");
 			printf("  -t,--truecolor\n");
 			printf("      Force truecolor output (even if the terminal doesn't seem to support it)\n\n");
+			printf("  -T,--no-truecolor\n");
+			printf("      Force disable truecolor output (even if the terminal does seem to support it)\n\n");
 			printf("  -h,--help\n");
 			printf("      Display this message\n\n");
 			
@@ -237,6 +243,9 @@ void parseCommandLine(int argc, char** argv) {
 		}
 		else if (strEqual(argv[i], "-t") || strEqual(argv[i], "--truecolor")) {
 			g_trueColor = true;
+		}
+		else if (strEqual(argv[i], "-T") || strEqual(argv[i], "--no-truecolor")) {
+			g_trueColor = false;
 		}
 		else if (strEqual(argv[i], "--")) {
 			finishedReadingFlags = true;
