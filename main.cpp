@@ -283,15 +283,20 @@ void abortHandler(int signo) {
 }
 
 void catFile(FILE* fh) {
-	int c;
+	int c, prev = 0;
 	while ((c = getc(fh)) >= 0) {
 		putc(c, stdout);
 		if (c == '\n') {
-			g_currentRow++;
-			if (g_currentRow == g_colorQueue.size()) {
-				g_currentRow = 0;
+			if (prev != '\n') {
+				g_currentRow++;
+				if (g_currentRow == g_colorQueue.size()) {
+					g_currentRow = 0;
+				}
 			}
 			setColor(g_colorQueue[g_currentRow]);
+		}
+		if (c != '\r') {
+			prev = c;
 		}
 	}
 }
