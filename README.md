@@ -54,6 +54,18 @@ Colorize your terminal output with pride!
 
 -h,--help
 	Display the help page
+
+-n,--number
+	number all output lines
+
+-E,--show-ends
+	display $ at the end of each line
+
+-s,--squeeze-blank
+	suppress repeated empty output lines
+
+-b,--number-nonblank
+	number nonempty output lines, overrides -n
 ```
 
 ## Building

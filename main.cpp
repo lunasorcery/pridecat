@@ -13,6 +13,8 @@
 #include <getopt.h>
 #include <unistd.h>
 #endif
+#include <fstream>
+#include <iostream>
 
 #define array_size(x) (sizeof(x)/sizeof(x[0]))
 
@@ -120,6 +122,11 @@ bool g_useColors = isatty(STDOUT_FILENO);
 bool g_trueColor = getenv("COLORTERM");
 #endif
 
+bool g_numberLines = false;
+bool g_showEnds = false;
+bool g_squeezeEmpty = false;
+bool g_numberNonblank = false;
+unsigned int g_blankLines = 0;
 
 bool strEqual(char const* a, char const* b) {
 	return strcmp(a, b) == 0;
@@ -181,6 +188,52 @@ void resetColor() {
 	}
 }
 
+void showUsage() {
+	printf("pridecat!\n");
+	printf("It's like cat but more colorful :)\n");
+	
+	printf("\nCurrently available flags:\n");
+	for (const auto& flag : allFlags) {
+		printf("  --%s", flag.first.c_str());
+		for (const auto& alias : aliases) {
+			if (flag.first == alias.second) {
+				printf(",--%s", alias.first.c_str());
+			}
+		}
+		if (g_useColors) {
+			printf(" ");
+			for (const auto& color : flag.second.colors) {
+				setColor(color);
+				printf("█");
+			}
+			resetColor();
+		}
+		printf("\n");
+		printf("      %s\n\n", flag.second.description.c_str());
+	}
+	
+	printf("Additional options:\n");
+	printf("  -f,--force\n");
+	printf("      Force color even when stdout is not a tty\n\n");
+	printf("  -t,--truecolor\n");
+	printf("      Force truecolor output (even if the terminal doesn't seem to support it)\n\n");
+	printf("  -h,--help\n");
+	printf("      Display this message\n\n");
+	printf("  -n,--number\n");
+	printf("      number all output lines\n\n");
+	printf("  -E,--show-ends\n");
+	printf("      display $ at the end of each line\n\n");
+	printf("  -s,--squeeze-blank\n");
+	printf("      suppress repeated empty output lines\n\n");
+	printf("  -b,--number-nonblank\n");
+	printf("      number nonempty output lines, overrides -n\n\n");
+	
+	printf("Examples:\n");
+	printf("  pridecat f - g          Output f's contents, then stdin, then g's contents.\n");
+	printf("  pridecat                Copy stdin to stdout, but with rainbows.\n");
+	printf("  pridecat --trans --bi   Alternate between trans and bisexual pride flags.\n");
+}
+
 void parseCommandLine(int argc, char** argv) {
 	bool finishedReadingFlags = false;
 	for (int i = 1; i < argc; ++i) {
@@ -188,41 +241,7 @@ void parseCommandLine(int argc, char** argv) {
 			g_filesToCat.push_back(argv[i]);
 		}
 		else if (strEqual(argv[i], "-h") || strEqual(argv[i], "--help")) {
-			printf("pridecat!\n");
-			printf("It's like cat but more colorful :)\n");
-			
-			printf("\nCurrently available flags:\n");
-			for (const auto& flag : allFlags) {
-				printf("  --%s", flag.first.c_str());
-				for (const auto& alias : aliases) {
-					if (flag.first == alias.second) {
-						printf(",--%s", alias.first.c_str());
-					}
-				}
-				if (g_useColors) {
-					printf(" ");
-					for (const auto& color : flag.second.colors) {
-						setColor(color);
-						printf("█");
-					}
-					resetColor();
-				}
-				printf("\n");
-				printf("      %s\n\n", flag.second.description.c_str());
-			}
-			
-			printf("Additional options:\n");
-			printf("  -f,--force\n");
-			printf("      Force color even when stdout is not a tty\n\n");
-			printf("  -t,--truecolor\n");
-			printf("      Force truecolor output (even if the terminal doesn't seem to support it)\n\n");
-			printf("  -h,--help\n");
-			printf("      Display this message\n\n");
-			
-			printf("Examples:\n");
-			printf("  pridecat f - g          Output f's contents, then stdin, then g's contents.\n");
-			printf("  pridecat                Copy stdin to stdout, but with rainbows.\n");
-			printf("  pridecat --trans --bi   Alternate between trans and bisexual pride flags.\n");
+			showUsage();
 			exit(0);
 		}
 		else if (strEqual(argv[i], "-f") || strEqual(argv[i], "--force")) {
@@ -230,6 +249,19 @@ void parseCommandLine(int argc, char** argv) {
 		}
 		else if (strEqual(argv[i], "-t") || strEqual(argv[i], "--truecolor")) {
 			g_trueColor = true;
+		}
+		else if (strEqual(argv[i], "--number")) {
+			g_numberLines = true;
+		}
+		else if (strEqual(argv[i], "--number-nonblank")) {
+			g_numberLines = true;
+			g_numberNonblank = true;
+		}
+		else if (strEqual(argv[i], "--show-ends")) {
+			g_showEnds = true;
+		}
+		else if (strEqual(argv[i], "--squeeze-blank")) {
+			g_squeezeEmpty = true;
 		}
 		else if (strEqual(argv[i], "--")) {
 			finishedReadingFlags = true;
@@ -241,6 +273,44 @@ void parseCommandLine(int argc, char** argv) {
 				pushFlag(flag->second);
 			} else {
 				fprintf(stderr, "pridecat: Unknown flag '%s'\n", argv[i]);
+				exit(1);
+			}
+		}
+		else if (startsWith(argv[i], "-")) {
+			bool unknownChar = false;
+			for (char* c = &(argv[i][1]); *c != '\0'; c++) {
+				switch(*c) {
+					case 'h':
+						showUsage();
+						exit(0);
+						break;
+					case 'f':
+						g_useColors = true;
+						break;
+					case 't':
+						g_trueColor = true;
+						break;
+					case 'b':
+						g_numberNonblank = true;
+						g_numberLines = true;
+						break;
+					case 'n':
+						g_numberLines = true;
+						break;
+					case 'E':
+						g_showEnds = true;
+						break;
+					case 's':
+						g_squeezeEmpty = true;
+						break;
+					default:
+						fprintf(stderr, "unknown flag: '%c'\n", *c);
+						unknownChar = true;
+						break;
+				}
+			}
+			if (unknownChar) {
+				showUsage();
 				exit(1);
 			}
 		}
@@ -260,17 +330,34 @@ void abortHandler(int signo) {
 	exit(signo);
 }
 
-void catFile(FILE* fh) {
-	int c;
-	while ((c = getc(fh)) >= 0) {
-		putc(c, stdout);
-		if (c == '\n') {
-			g_currentRow++;
-			if (g_currentRow == g_colorQueue.size()) {
-				g_currentRow = 0;
-			}
-			setColor(g_colorQueue[g_currentRow]);
+void catFile(std::istream& fh) {
+	std::string line;
+	bool repeatedEmpty = false;
+	while (std::getline(fh, line)) {
+		if (g_squeezeEmpty and repeatedEmpty and line.empty()) {
+			continue;
 		}
+		else if (line.empty()) {
+			repeatedEmpty = true;
+			g_blankLines++;
+		}
+		g_currentRow++;
+		setColor(g_colorQueue[g_currentRow % g_colorQueue.size()]);
+		if (g_numberLines) {
+			unsigned int actualLineNumber = g_currentRow;
+			if (g_numberNonblank) {
+				actualLineNumber -= g_blankLines;
+			}
+			if (not (g_numberNonblank and line.empty())) {
+				// line numbers in cat are 1 indexed
+				fprintf(stdout, "%6u  ", actualLineNumber);
+			}
+		}
+		fprintf(stdout, "%s", line.c_str());
+		if (g_showEnds) {
+			fprintf(stdout, "$");
+		}
+		fprintf(stdout, "\n");
 	}
 }
 
@@ -314,13 +401,13 @@ int main(int argc, char** argv) {
 	setColor(g_colorQueue[0]);
 	
 	if (g_filesToCat.empty()) {
-		catFile(stdin);
+		catFile(std::cin);
 	} else {
 		for (auto const& filepath : g_filesToCat) {
 			if (filepath == "") {
-				catFile(stdin);
+				catFile(std::cin);
 			} else {
-				FILE* fh = fopen(filepath.c_str(), "rb");
+				std::ifstream fh(filepath.c_str(), std::ifstream::in | std::ifstream::binary);
 				if (!fh) {
 					fprintf(
 						stderr,
@@ -330,7 +417,6 @@ int main(int argc, char** argv) {
 					return 1;
 				}
 				catFile(fh);
-				fclose(fh);
 			}
 		}
 	}
