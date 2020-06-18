@@ -68,9 +68,9 @@ std::map<std::string, flag_t const> allFlags = {
 	} },
 
 	{ "aromantic", {
-		// colors from https://en.wikipedia.org/wiki/File:Aromantic_Pride_Flag.svg
+		// colors from https://en.wikipedia.org/wiki/File:Aromantic_Pride_Flag.svg / https://cameronwhimsy.tumblr.com/post/75868343112/ive-been-reading-up-on-a-lot-of-the-discussion
 		{ 0x3DA542,0xA7D479,0xFFFFFF,0xA9A9A9,0x000000 },
-		"Aromantic pride flag linked by AVEN user 'Hamster' in 2015"
+		"Aromantic pride flag designed by Tumblr user 'cameronwhimsy' in 2014"
 	} },
 
 	{ "pansexual", {
