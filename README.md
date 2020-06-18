@@ -55,6 +55,9 @@ Colorize your terminal output with pride!
 -t,--truecolor
 	Force truecolor output (even if the terminal doesn't seem to support it)
 
+-T,--no-truecolor
+	Force disable truecolor output (even if the terminal does seem to support it)
+
 -h,--help
 	Display the help page
 ```
