@@ -29,74 +29,83 @@ struct flag_t {
 
 std::map<std::string, flag_t const> allFlags = {
 	{ "lgbt", {
-		// colors from https://en.wikipedia.org/wiki/File:Gay_Pride_Flag.svg
-		{ 0xE40303,0xFF8C00,0xFFED00,0x008026,0x004Dff,0x750787 },
+		// info: https://en.wikipedia.org/wiki/Rainbow_flag_(LGBT)
+		// colors: https://en.wikipedia.org/wiki/File:Gay_Pride_Flag.svg
+		{ 0xE40303, 0xFF8C00, 0xFFED00, 0x008026, 0x004Dff, 0x750787 },
 		"Classic 6-color rainbow flag popular since 1979"
 	} },
 
 	{ "lgbt-1978", {
-		// colors from https://en.wikipedia.org/wiki/File:Gay_flag_8.svg
-		{ 0xFF69B4,0xFF0000,0xFF8E00,0xFFFF00,0x008E00,0x00C0C0,0x400098,0x8E008E },
+		// info: https://en.wikipedia.org/wiki/Rainbow_flag_(LGBT)
+		// colors: https://en.wikipedia.org/wiki/File:Gay_flag_8.svg
+		{ 0xFF69B4, 0xFF0000, 0xFF8E00, 0xFFFF00, 0x008E00, 0x00C0C0, 0x400098, 0x8E008E },
 		"Original 8-color rainbow flag designed by Gilbert Baker in 1978"
 	} },
 
 	{ "lgbtpoc", {
-		// colors from https://en.wikipedia.org/wiki/File:Philadelphia_Pride_Flag.svg
-		{ 0x000000,0x784F17,0xE40303,0xFF8C00,0xFFED00,0x008026,0x004DFF,0x750787 },
+		// info: https://en.wikipedia.org/wiki/Rainbow_flag_(LGBT)
+		// colors: https://en.wikipedia.org/wiki/File:Philadelphia_Pride_Flag.svg
+		{ 0x000000, 0x784F17, 0xE40303, 0xFF8C00, 0xFFED00, 0x008026, 0x004DFF, 0x750787 },
 		"POC-inclusive rainbow flag designed by Philadelphia City Council in 2017"
 	} },
 
 	{ "transgender", {
-		// colors from https://en.wikipedia.org/wiki/File:Transgender_Pride_flag.svg
-		{ 0x5BCEFA,0xF5A9B8,0xFFFFFF,0xF5A9B8,0x5BCEFA },
+		// info: https://en.wikipedia.org/wiki/Transgender_flags
+		// colors: https://en.wikipedia.org/wiki/File:Transgender_Pride_flag.svg
+		{ 0x5BCEFA, 0xF5A9B8, 0xFFFFFF, 0xF5A9B8, 0x5BCEFA },
 		"Transgender pride flag designed by Monica Helms in 1999"
 	} },
 
 	{ "bisexual", {
-		// colors from https://en.wikipedia.org/wiki/File:Bisexual_Pride_Flag.svg
-		{ 0xD60270,0xD60270,0x9B4F96,0x0038A8,0x0038A8 },
+		// info: https://en.wikipedia.org/wiki/Bisexual_pride_flag
+		// colors: https://en.wikipedia.org/wiki/File:Bisexual_Pride_Flag.svg
+		{ 0xD60270, 0xD60270, 0x9B4F96, 0x0038A8, 0x0038A8 },
 		"Bisexual pride flag designed by Michael Page in 1998"
 	} },
 
 	{ "asexual", {
-		// colors from https://en.wikipedia.org/wiki/File:Asexual_Pride_Flag.svg
-		{ 0x000000,0xA3A3A3,0xFFFFFF,0x800080 },
+		// info: https://en.wikipedia.org/wiki/LGBT_symbols#Asexuality
+		// colors: https://en.wikipedia.org/wiki/File:Asexual_Pride_Flag.svg
+		{ 0x000000, 0xA3A3A3, 0xFFFFFF, 0x800080 },
 		"Asexual pride flag designed by AVEN user 'standup' in 2010"
 	} },
 
 	{ "aromantic", {
-		// colors from https://en.wikipedia.org/wiki/File:Aromantic_Pride_Flag.svg / https://cameronwhimsy.tumblr.com/post/75868343112/ive-been-reading-up-on-a-lot-of-the-discussion
-		{ 0x3DA542,0xA7D479,0xFFFFFF,0xA9A9A9,0x000000 },
+		// info/colors: https://cameronwhimsy.tumblr.com/post/75868343112/ive-been-reading-up-on-a-lot-of-the-discussion
+		{ 0x3DA642, 0xA8D379, 0xFFFFFF, 0xA9A9A9, 0x000000 },
 		"Aromantic pride flag designed by Tumblr user 'cameronwhimsy' in 2014"
 	} },
 
 	{ "pansexual", {
-		// colors from https://en.wikipedia.org/wiki/File:Pansexuality_Pride_Flag.svg
-		{ 0xFF218C,0xFF218C,0xFFD800,0xFFD800,0x21B1FF,0x21B1FF, },
+		// info: https://majesticmess.com/2018/12/01/interview-creator-of-the-pan-flag/
+		// colors: https://web.archive.org/web/20111103184455/http://pansexualflag.tumblr.com/post/1265215452/hex-color-codes-you-dont-have-to-use-these-exact
+		{ 0xFF218C, 0xFF218C, 0xFFD800, 0xFFD800, 0x21B1FF, 0x21B1FF },
 		"Pansexual pride flag designed by Evie Varney in 2010"
 	} },
 
 	{ "nonbinary", {
-		// colors from https://en.wikipedia.org/wiki/File:Nonbinary_flag.svg
-		{ 0xFFF430,0xFFFFFF,0x9C59D1,0x000000 },
+		// info: https://en.wikipedia.org/wiki/LGBT_symbols#Non-binary
+		// colors: https://en.wikipedia.org/wiki/File:Nonbinary_flag.svg
+		{ 0xFFF430, 0xFFFFFF, 0x9C59D1, 0x000000 },
 		"Non-binary pride flag designed by Kye Rowan in 2014"
 	} },
 
 	{ "lipstick-lesbian", {
-		// colors from https://en.wikipedia.org/wiki/File:Lipstick_Lesbian_flag_without_lips.svg
-		{ 0xA40061,0xB75592,0xD063A6,0xEDEDEB,0xE4ACCF,0xC54E54,0x8A1E04 },
+		// info/colors: https://en.wikipedia.org/wiki/File:Lipstick_Lesbian_flag_without_lips.svg
+		{ 0xA40061, 0xB75592, 0xD063A6, 0xEDEDEB, 0xE4ACCF, 0xC54E54, 0x8A1E04 },
 		"Lipstick lesbian pride flag designed by Natalie McCray in 2010"
 	} },
 
 	{ "new-lesbian", {
-		// colors from https://en.wikipedia.org/wiki/File:Lesbian_pride_flag_2018.svg
-		{ 0xD52D00,0xEF7627,0xFF9A56,0xFFFFFF,0xD162A4,0xB55690,0xA30262 },
+		// info: https://en.wikipedia.org/wiki/LGBT_symbols#Lesbian
+		// colors: https://en.wikipedia.org/wiki/File:Lesbian_pride_flag_2018.svg
+		{ 0xD52D00, 0xEF7627, 0xFF9A56, 0xFFFFFF, 0xD162A4, 0xB55690, 0xA30262 },
 		"New lesbian pride flag designed by Emily Gwen in 2018"
 	} },
 
 	{ "genderqueer", {
-		// colors from https://genderqueerid.com/about-flag
-		{ 0xB57EDC,0xB57EDC,0xFFFFFF,0xFFFFFF,0x4A8123,0x4A8123, },
+		// info/colors: https://genderqueerid.com/about-flag
+		{ 0xB57EDC, 0xB57EDC, 0xFFFFFF, 0xFFFFFF, 0x4A8123, 0x4A8123 },
 		"Genderqueer pride flag designed by Marilyn Roxie in 2011"
 	} },
 };
