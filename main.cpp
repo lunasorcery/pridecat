@@ -2,19 +2,16 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <csignal>
 #include <string>
 #include <vector>
 #include <map>
-#include <signal.h>
 #if defined(_WIN32)
 #include <Windows.h>
 #include <io.h>
 #else
-#include <getopt.h>
 #include <unistd.h>
 #endif
-
-#define array_size(x) (sizeof(x)/sizeof(x[0]))
 
 struct color_t {
 	uint8_t r,g,b;
@@ -145,10 +142,10 @@ bool startsWith(char const* a, char const* b) {
 int bestNonTruecolorMatch(color_t const& color) {
 	/*
 	per wikipedia:
-		0-  7:  standard colors (as in ESC [ 30–37 m)
-		8- 15:  high intensity colors (as in ESC [ 90–97 m)
+	    0-  7:  standard colors (as in ESC [ 30–37 m)
+	    8- 15:  high intensity colors (as in ESC [ 90–97 m)
 	->  16-231:  6 × 6 × 6 cube (216 colors): 16 + 36 × r + 6 × g + b (0 ≤ r, g, b ≤ 5)
-		232-255:  grayscale from black to white in 24 steps
+	    232-255:  grayscale from black to white in 24 steps
 	*/
 	int const r = (color.r / 51);
 	int const g = (color.g / 51);
