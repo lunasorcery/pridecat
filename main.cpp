@@ -28,13 +28,13 @@ struct flag_t {
 };
 
 std::map<std::string, flag_t const> allFlags = {
-	{ "lgbt", { 
-		// colors from https://www.schemecolor.com/lgbt-flag-colors.php
-		{ 0xFF0018,0xFFA52C,0xFFFF41,0x008018,0x0000F9,0x86007D }, 
+	{ "lgbt", {
+		// colors from https://en.wikipedia.org/wiki/File:Gay_Pride_Flag.svg
+		{ 0xE40303,0xFF8C00,0xFFED00,0x008026,0x004Dff,0x750787 },
 		"Classic 6-color rainbow flag popular since 1979"
 	} },
 
-	{ "lgbt-1978", { 
+	{ "lgbt-1978", {
 		// colors from https://en.wikipedia.org/wiki/File:Gay_flag_8.svg
 		{ 0xFF69B4,0xFF0000,0xFF8E00,0xFFFF00,0x008E00,0x00C0C0,0x400098,0x8E008E },
 		"Original 8-color rainbow flag designed by Gilbert Baker in 1978"
@@ -46,21 +46,21 @@ std::map<std::string, flag_t const> allFlags = {
 		"POC-inclusive rainbow flag designed by Philadelphia City Council in 2017"
 	} },
 
-	{ "transgender", { 
-		// colors from https://www.schemecolor.com/transgender-pride-flag-colors.php
-		{ 0x55CDFC,0xF7A8B8,0xFFFFFF,0xF7A8B8,0x55CDFC },
+	{ "transgender", {
+		// colors from https://en.wikipedia.org/wiki/File:Transgender_Pride_flag.svg
+		{ 0x5BCEFA,0xF5A9B8,0xFFFFFF,0xF5A9B8,0x5BCEFA },
 		"Transgender pride flag designed by Monica Helms in 1999"
 	} },
 
 	{ "bisexual", {
-		// colors from https://www.schemecolor.com/bisexuality-flag-colors.php
+		// colors from https://en.wikipedia.org/wiki/File:Bisexual_Pride_Flag.svg
 		{ 0xD60270,0xD60270,0x9B4F96,0x0038A8,0x0038A8 },
 		"Bisexual pride flag designed by Michael Page in 1998"
 	} },
 
 	{ "asexual", {
-		// colors from https://www.schemecolor.com/asexual-pride-flag-colors.php
-		{ 0x000000,0xA4A4A4,0xFFFFFF,0x810081 },
+		// colors from https://en.wikipedia.org/wiki/File:Asexual_Pride_Flag.svg
+		{ 0x000000,0xA3A3A3,0xFFFFFF,0x800080 },
 		"Asexual pride flag designed by AVEN user 'standup' in 2010"
 	} },
 
@@ -71,13 +71,13 @@ std::map<std::string, flag_t const> allFlags = {
 	} },
 
 	{ "pansexual", {
-		// colors from https://www.schemecolor.com/pansexuality-flag-colors.php
-		{ 0xFF1B8D,0xFF1B8D,0xFFDA00,0xFFDA00,0x1BB3FF,0x1BB3FF, },
+		// colors from https://en.wikipedia.org/wiki/File:Pansexuality_Pride_Flag.svg
+		{ 0xFF218C,0xFF218C,0xFFD800,0xFFD800,0x21B1FF,0x21B1FF, },
 		"Pansexual pride flag designed by Evie Varney in 2010"
 	} },
 
 	{ "nonbinary", {
-		// colors from https://www.schemecolor.com/non-binary-gender-flag-colors.php
+		// colors from https://en.wikipedia.org/wiki/File:Nonbinary_flag.svg
 		{ 0xFFF430,0xFFFFFF,0x9C59D1,0x000000 },
 		"Non-binary pride flag designed by Kye Rowan in 2014"
 	} },
@@ -194,7 +194,7 @@ void parseCommandLine(int argc, char** argv) {
 		else if (strEqual(argv[i], "-h") || strEqual(argv[i], "--help")) {
 			printf("pridecat!\n");
 			printf("It's like cat but more colorful :)\n");
-			
+
 			printf("\nCurrently available flags:\n");
 			for (const auto& flag : allFlags) {
 				printf("  --%s", flag.first.c_str());
@@ -214,7 +214,7 @@ void parseCommandLine(int argc, char** argv) {
 				printf("\n");
 				printf("      %s\n\n", flag.second.description.c_str());
 			}
-			
+
 			printf("Additional options:\n");
 			printf("  -f,--force\n");
 			printf("      Force color even when stdout is not a tty\n\n");
@@ -222,7 +222,7 @@ void parseCommandLine(int argc, char** argv) {
 			printf("      Force truecolor output (even if the terminal doesn't seem to support it)\n\n");
 			printf("  -h,--help\n");
 			printf("      Display this message\n\n");
-			
+
 			printf("Examples:\n");
 			printf("  pridecat f - g          Output f's contents, then stdin, then g's contents.\n");
 			printf("  pridecat                Copy stdin to stdout, but with rainbows.\n");
@@ -316,7 +316,7 @@ int main(int argc, char** argv) {
 	}
 
 	setColor(g_colorQueue[0]);
-	
+
 	if (g_filesToCat.empty()) {
 		catFile(stdin);
 	} else {
