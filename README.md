@@ -49,6 +49,9 @@ Colorize your terminal output with pride!
 ## Additional options
 
 ```
+-b,--background
+	Set background color (instead of foreground)
+
 -f,--force
 	Force color even when stdout is not a tty
 

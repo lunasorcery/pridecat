@@ -124,6 +124,7 @@ std::map<std::string, std::string> aliases = {
 std::vector<color_t> g_colorQueue;
 std::vector<std::string> g_filesToCat;
 unsigned int g_currentRow = 0;
+bool g_background = false;
 
 #if defined(_WIN32)
 bool g_useColors = _isatty(_fileno(stdout));
@@ -184,17 +185,18 @@ void setColor(color_t const& color) {
 	if (!g_useColors)
 		return;
 
+	int code = g_background ? 48 : 38;
 	if (g_trueColor) {
-		fprintf(stdout, "\033[38;2;%d;%d;%dm", color.r, color.g, color.b);
+		fprintf(stdout, "\033[%d;2;%d;%d;%dm", code, color.r, color.g, color.b);
 	} else {
 		// apparently the default macOS Terminal.app still needs this?? (as of 10.14 Mojave)
-		fprintf(stdout, "\033[38;5;%dm", bestNonTruecolorMatch(color));
+		fprintf(stdout, "\033[%d;5;%dm", code, bestNonTruecolorMatch(color));
 	}
 }
 
 void resetColor() {
 	if (g_useColors) {
-		fputs("\033[39m", stdout);
+		fprintf(stdout, "\033[%dm", g_background ? 49 : 39);
 	}
 }
 
@@ -229,6 +231,8 @@ void parseCommandLine(int argc, char** argv) {
 			}
 
 			printf("Additional options:\n");
+			printf("  -b,--background\n");
+			printf("      Set background color (instead of foreground)\n\n");
 			printf("  -f,--force\n");
 			printf("      Force color even when stdout is not a tty\n\n");
 			printf("  -t,--truecolor\n");
@@ -243,6 +247,9 @@ void parseCommandLine(int argc, char** argv) {
 			printf("  pridecat                Copy stdin to stdout, but with rainbows.\n");
 			printf("  pridecat --trans --bi   Alternate between trans and bisexual pride flags.\n");
 			exit(0);
+		}
+		else if (strEqual(argv[i], "-b") || strEqual(argv[i], "--background")) {
+			g_background = true;
 		}
 		else if (strEqual(argv[i], "-f") || strEqual(argv[i], "--force")) {
 			g_useColors = true;
