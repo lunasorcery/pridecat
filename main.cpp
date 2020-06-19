@@ -143,6 +143,7 @@ bool strEqual(char const* a, char const* b) {
 }
 
 bool startsWith(char const* a, char const* b) {
+	// not checking the length of a is safe b/c a[strlen(a)] != b[strlen(a)] if strlen(a) < strlen(b)
 	int const length = strlen(b);
 	for (int i = 0; i < length; ++i) {
 		if (a[i] != b[i]) {
