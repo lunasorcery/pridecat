@@ -124,6 +124,7 @@ std::map<std::string, std::string> aliases = {
 std::vector<color_t> g_colorQueue;
 std::vector<std::string> g_filesToCat;
 unsigned int g_currentRow = 0;
+bool g_changeEmpty = false;
 
 #if defined(_WIN32)
 bool g_useColors = _isatty(_fileno(stdout));
@@ -229,6 +230,8 @@ void parseCommandLine(int argc, char** argv) {
 			}
 
 			printf("Additional options:\n");
+			printf("  -e,--change-empty\n");
+			printf("      Change color on empty lines as well\n\n");
 			printf("  -f,--force\n");
 			printf("      Force color even when stdout is not a tty\n\n");
 			printf("  -t,--truecolor\n");
@@ -243,6 +246,9 @@ void parseCommandLine(int argc, char** argv) {
 			printf("  pridecat                Copy stdin to stdout, but with rainbows.\n");
 			printf("  pridecat --trans --bi   Alternate between trans and bisexual pride flags.\n");
 			exit(0);
+		}
+		else if (strEqual(argv[i], "-e") || strEqual(argv[i], "--change-empty")) {
+			g_changeEmpty = true;
 		}
 		else if (strEqual(argv[i], "-f") || strEqual(argv[i], "--force")) {
 			g_useColors = true;
@@ -287,7 +293,7 @@ void catFile(FILE* fh) {
 	while ((c = getc(fh)) >= 0) {
 		putc(c, stdout);
 		if (c == '\n') {
-			if (prev != '\n') {
+			if (g_changeEmpty || prev != '\n') {
 				g_currentRow++;
 				if (g_currentRow == g_colorQueue.size()) {
 					g_currentRow = 0;

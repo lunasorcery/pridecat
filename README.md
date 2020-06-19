@@ -49,6 +49,9 @@ Colorize your terminal output with pride!
 ## Additional options
 
 ```
+-e,--change-empty
+	Change color on empty lines as well
+
 -f,--force
 	Force color even when stdout is not a tty
 
