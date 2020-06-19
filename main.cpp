@@ -20,11 +20,19 @@ struct color_t {
 	, g((rgb >> 8) & 0xff)
 	, b(rgb & 0xff)
 	{}
+	color_t(uint8_t r, uint8_t g, uint8_t b)
+	: r(r), g(g), b(b) {}
 };
 
 struct flag_t {
 	std::vector<color_t> colors;
 	std::string description;
+};
+
+enum class colorAdjust : uint8_t {
+	none,
+	lighten,
+	darken
 };
 
 std::map<std::string, flag_t const> allFlags = {
@@ -132,6 +140,7 @@ std::map<std::string, std::string> aliases = {
 std::vector<color_t> g_colorQueue;
 std::vector<std::string> g_filesToCat;
 unsigned int g_currentRow = 0;
+colorAdjust g_colorAdjustment = colorAdjust::none;
 
 #if defined(_WIN32)
 bool g_useColors = _isatty(_fileno(stdout));
@@ -189,14 +198,34 @@ std::string resolveAlias(const std::string& arg) {
 	return arg;
 }
 
+color_t adjustForReadability(color_t const& color) {
+	if (g_colorAdjustment == colorAdjust::darken) {
+		return color_t(
+			(color.r*3)/4,
+			(color.g*3)/4,
+			(color.b*3)/4
+		);
+	} else if (g_colorAdjustment == colorAdjust::lighten) {
+		return color_t(
+			64+(color.r*3)/4,
+			64+(color.g*3)/4,
+			64+(color.b*3)/4
+		);
+	} else {
+		return color;
+	}
+}
+
 void setTextColor(color_t const& color) {
 	if (!g_useColors)
 		return;
 
+	color_t const readableColor = adjustForReadability(color);
+
 	if (g_trueColor) {
-		fprintf(stdout, "\033[38;2;%d;%d;%dm", color.r, color.g, color.b);
+		fprintf(stdout, "\033[38;2;%d;%d;%dm", readableColor.r, readableColor.g, readableColor.b);
 	} else {
-		fprintf(stdout, "\033[38;5;%dm", bestNonTruecolorMatch(color));
+		fprintf(stdout, "\033[38;5;%dm", bestNonTruecolorMatch(readableColor));
 	}
 }
 
@@ -204,10 +233,12 @@ void setBackgroundColor(color_t const& color) {
 	if (!g_useColors)
 		return;
 
+	color_t const readableColor = adjustForReadability(color);
+
 	if (g_trueColor) {
-		fprintf(stdout, "\033[48;2;%d;%d;%dm", color.r, color.g, color.b);
+		fprintf(stdout, "\033[48;2;%d;%d;%dm", readableColor.r, readableColor.g, readableColor.b);
 	} else {
-		fprintf(stdout, "\033[48;5;%dm", bestNonTruecolorMatch(color));
+		fprintf(stdout, "\033[48;5;%dm", bestNonTruecolorMatch(readableColor));
 	}
 }
 
@@ -280,6 +311,10 @@ void parseCommandLine(int argc, char** argv) {
 			printf("      Force truecolor output (even if the terminal doesn't seem to support it)\n\n");
 			printf("  -T,--no-truecolor\n");
 			printf("      Force disable truecolor output (even if the terminal does seem to support it)\n\n");
+			printf("  -l,--lighten\n");
+			printf("      Lighten colors slightly for improved readability on dark backgrounds\n\n");
+			printf("  -d,--darken\n");
+			printf("      Darken colors slightly for improved readability on light backgrounds\n\n");
 			printf("  -h,--help\n");
 			printf("      Display this message\n\n");
 
@@ -300,6 +335,12 @@ void parseCommandLine(int argc, char** argv) {
 		}
 		else if (strEqual(argv[i], "-b") || strEqual(argv[i], "--background")) {
 			g_setBackgroundColor = true;
+		}
+		else if (strEqual(argv[i], "-l") || strEqual(argv[i], "--lighten")) {
+			g_colorAdjustment = colorAdjust::lighten;
+		}
+		else if (strEqual(argv[i], "-d") || strEqual(argv[i], "--darken")) {
+			g_colorAdjustment = colorAdjust::darken;
 		}
 		else if (strEqual(argv[i], "--")) {
 			finishedReadingFlags = true;
