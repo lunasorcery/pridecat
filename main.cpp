@@ -311,9 +311,9 @@ void parseCommandLine(int argc, char** argv) {
 			printf("      Force truecolor output (even if the terminal doesn't seem to support it)\n\n");
 			printf("  -T,--no-truecolor\n");
 			printf("      Force disable truecolor output (even if the terminal does seem to support it)\n\n");
-			printf("  -r,--readability-lighten\n");
+			printf("  -l,--lighten\n");
 			printf("      Lighten colors slightly for improved readability on dark backgrounds\n\n");
-			printf("  -R,--readability-darken\n");
+			printf("  -d,--darken\n");
 			printf("      Darken colors slightly for improved readability on light backgrounds\n\n");
 			printf("  -h,--help\n");
 			printf("      Display this message\n\n");
@@ -336,10 +336,10 @@ void parseCommandLine(int argc, char** argv) {
 		else if (strEqual(argv[i], "-b") || strEqual(argv[i], "--background")) {
 			g_setBackgroundColor = true;
 		}
-		else if (strEqual(argv[i], "-r") || strEqual(argv[i], "--readability-lighten")) {
+		else if (strEqual(argv[i], "-l") || strEqual(argv[i], "--lighten")) {
 			g_colorAdjustment = colorAdjust::lighten;
 		}
-		else if (strEqual(argv[i], "-R") || strEqual(argv[i], "--readability-darken")) {
+		else if (strEqual(argv[i], "-d") || strEqual(argv[i], "--darken")) {
 			g_colorAdjustment = colorAdjust::darken;
 		}
 		else if (strEqual(argv[i], "--")) {
