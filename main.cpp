@@ -103,6 +103,13 @@ std::map<std::string, flag_t const> allFlags = {
 		"New lesbian pride flag designed by Emily Gwen in 2018"
 	} },
 
+	{ "community-lesbian", {
+		// info/colors: https://majesticmess.com/encyclopedia/lesbian-flag-sadlesbeandisaster/
+		// more info: https://twitter.com/lesflagisracist/status/1107301651403157505
+		{ 0xD52D00, 0xFF9A56, 0xFFFFFF, 0xD362A4, 0xA30262 },
+		"5-color 'Community' variant designed by Tumblr user 'taqwomen' in 2018"
+	} },
+
 	{ "genderqueer", {
 		// info/colors: https://genderqueerid.com/about-flag
 		{ 0xB57EDC, 0xB57EDC, 0xFFFFFF, 0xFFFFFF, 0x4A8123, 0x4A8123 },
@@ -119,6 +126,7 @@ std::map<std::string, std::string> aliases = {
 	{ "nb", "nonbinary" },
 	{ "enby", "nonbinary" },
 	{ "pink-lesbian", "lipstick-lesbian" },
+	{ "lesbian", "community-lesbian" },
 };
 
 std::vector<color_t> g_colorQueue;
@@ -137,6 +145,7 @@ bool isTrueColorTerminal() {
 bool g_useColors = isatty(STDOUT_FILENO);
 bool g_trueColor = isTrueColorTerminal();
 #endif
+bool g_setBackgroundColor = false;
 
 
 bool strEqual(char const* a, char const* b) {
@@ -181,21 +190,55 @@ std::string resolveAlias(const std::string& arg) {
 	return arg;
 }
 
-void setColor(color_t const& color) {
+void setTextColor(color_t const& color) {
 	if (!g_useColors)
 		return;
 
 	if (g_trueColor) {
 		fprintf(stdout, "\033[38;2;%d;%d;%dm", color.r, color.g, color.b);
 	} else {
-		// apparently the default macOS Terminal.app still needs this?? (as of 10.14 Mojave)
 		fprintf(stdout, "\033[38;5;%dm", bestNonTruecolorMatch(color));
 	}
 }
 
+void setBackgroundColor(color_t const& color) {
+	if (!g_useColors)
+		return;
+
+	if (g_trueColor) {
+		fprintf(stdout, "\033[48;2;%d;%d;%dm", color.r, color.g, color.b);
+	} else {
+		fprintf(stdout, "\033[48;5;%dm", bestNonTruecolorMatch(color));
+	}
+}
+
+void resetTextColor() {
+	if (!g_useColors)
+		return;
+
+	fputs("\033[39m", stdout);
+}
+
+void resetBackgroundColor() {
+	if (!g_useColors)
+		return;
+
+	fputs("\033[49m", stdout);
+}
+
+void setColor(color_t const& color) {
+	if (g_setBackgroundColor) {
+		setBackgroundColor(color);
+	} else {
+		setTextColor(color);
+	}
+}
+
 void resetColor() {
-	if (g_useColors) {
-		fputs("\033[39m", stdout);
+	if (g_setBackgroundColor) {
+		resetBackgroundColor();
+	} else {
+		resetTextColor();
 	}
 }
 
@@ -220,16 +263,18 @@ void parseCommandLine(int argc, char** argv) {
 				if (g_useColors) {
 					printf(" ");
 					for (const auto& color : flag.second.colors) {
-						setColor(color);
+						setTextColor(color);
 						printf("█");
 					}
-					resetColor();
+					resetTextColor();
 				}
 				printf("\n");
 				printf("      %s\n\n", flag.second.description.c_str());
 			}
 
 			printf("Additional options:\n");
+			printf("  -b,--background\n");
+			printf("      Change the background color instead of the text color\n\n");
 			printf("  -e,--change-empty\n");
 			printf("      Change color on empty lines as well\n\n");
 			printf("  -f,--force\n");
@@ -258,6 +303,9 @@ void parseCommandLine(int argc, char** argv) {
 		}
 		else if (strEqual(argv[i], "-T") || strEqual(argv[i], "--no-truecolor")) {
 			g_trueColor = false;
+		}
+		else if (strEqual(argv[i], "-b") || strEqual(argv[i], "--background")) {
+			g_setBackgroundColor = true;
 		}
 		else if (strEqual(argv[i], "--")) {
 			finishedReadingFlags = true;
@@ -291,6 +339,9 @@ void abortHandler(int signo) {
 void catFile(FILE* fh) {
 	int c, prev = 0;
 	while ((c = getc(fh)) >= 0) {
+		if (c == '\n') {
+			resetColor();
+		}
 		putc(c, stdout);
 		if (c == '\n') {
 			if (g_changeEmpty || prev != '\n') {
