@@ -178,9 +178,9 @@ int bestNonTruecolorMatch(color_t const& color) {
 	->  16-231:  6 × 6 × 6 cube (216 colors): 16 + 36 × r + 6 × g + b (0 ≤ r, g, b ≤ 5)
 	    232-255:  grayscale from black to white in 24 steps
 	*/
-	int const r = (color.r / 51);
-	int const g = (color.g / 51);
-	int const b = (color.b / 51);
+	int const r = (color.r*6)/256;
+	int const g = (color.g*6)/256;
+	int const b = (color.b*6)/256;
 	return 16 + (36*r) + (6*g) + b;
 }
 
