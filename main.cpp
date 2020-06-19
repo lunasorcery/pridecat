@@ -379,23 +379,25 @@ void abortHandler(int signo) {
 }
 
 void catFile(FILE* fh) {
-	int c, prev = 0;
+	int c;
+	bool empty = true;
 	while ((c = getc(fh)) >= 0) {
 		if (c == '\n') {
 			resetColor();
 		}
 		putc(c, stdout);
 		if (c == '\n') {
-			if (g_changeEmpty || prev != '\n') {
+			if (g_changeEmpty || !empty) {
 				g_currentRow++;
 				if (g_currentRow == g_colorQueue.size()) {
 					g_currentRow = 0;
 				}
 			}
 			setColor(g_colorQueue[g_currentRow]);
+			empty = true;
 		}
-		if (c != '\r') {
-			prev = c;
+		else if (c != ' ' && c != '\t' && c != '\r') {
+			empty = false;
 		}
 	}
 }
