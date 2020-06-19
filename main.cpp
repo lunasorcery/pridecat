@@ -108,6 +108,18 @@ std::map<std::string, flag_t const> allFlags = {
 		{ 0xB57EDC, 0xB57EDC, 0xFFFFFF, 0xFFFFFF, 0x4A8123, 0x4A8123 },
 		"Genderqueer pride flag designed by Marilyn Roxie in 2011"
 	} },
+
+	{ "polyamorous", {
+		// info/colors: https://en.wikipedia.org/wiki/File:Polyamory_Pride_Flag.svg
+		{ 0x0000ff, 0x0000ff, 0xff0000, 0xff0000, 0x000000, 0x000000},
+		"Polyamory pride flag designed by Jim Evans"
+	} },
+
+	{ "polyamorous-light", {
+		// info/colors: https://commons.wikimedia.org/wiki/File:Polyamory_flag_traditional_reworked_03.png
+		{ 0x00cdff, 0x00cdff, 0xff3535, 0xff3535, 0x4e4f4b, 0x4e4f4b},
+		"Alternative polyamory pride flag, increased readability for dark backgrounds"
+	} },
 };
 
 std::map<std::string, std::string> aliases = {
@@ -119,6 +131,8 @@ std::map<std::string, std::string> aliases = {
 	{ "nb", "nonbinary" },
 	{ "enby", "nonbinary" },
 	{ "pink-lesbian", "lipstick-lesbian" },
+	{ "poly", "polyamorous"},
+	{ "poly-light", "polyamorous-light"}
 };
 
 std::vector<color_t> g_colorQueue;
