@@ -44,6 +44,12 @@ Colorize your terminal output with pride!
 
 --transgender,--trans
 	Transgender pride flag designed by Monica Helms in 1999
+
+--polyamorous,--poly
+	Polyamory pride flag designed by Jim Evans
+
+--polyamorous-light,--poly-light
+	Alternative polyamory pride flag, increased readability for dark backgrounds
 ```
 
 ## Additional options
