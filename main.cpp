@@ -126,6 +126,7 @@ std::map<std::string, std::string> aliases = {
 	{ "nb", "nonbinary" },
 	{ "enby", "nonbinary" },
 	{ "pink-lesbian", "lipstick-lesbian" },
+	{ "lesbian", "community-lesbian" },
 };
 
 std::vector<color_t> g_colorQueue;
