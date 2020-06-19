@@ -103,6 +103,13 @@ std::map<std::string, flag_t const> allFlags = {
 		"New lesbian pride flag designed by Emily Gwen in 2018"
 	} },
 
+	{ "community-lesbian", {
+		// info/colors: https://majesticmess.com/encyclopedia/lesbian-flag-sadlesbeandisaster/
+		// more info: https://twitter.com/lesflagisracist/status/1107301651403157505
+		{ 0xD52D00, 0xFF9A56, 0xFFFFFF, 0xD362A4, 0xA30262 },
+		"5-color 'Community' variant designed by Tumblr user 'taqwomen' in 2018"
+	} },
+
 	{ "genderqueer", {
 		// info/colors: https://genderqueerid.com/about-flag
 		{ 0xB57EDC, 0xB57EDC, 0xFFFFFF, 0xFFFFFF, 0x4A8123, 0x4A8123 },

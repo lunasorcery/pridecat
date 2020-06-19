@@ -18,6 +18,9 @@ Colorize your terminal output with pride!
 --bisexual,--bi
 	Bisexual pride flag designed by Michael Page in 1998
 
+--community-lesbian
+	5-color 'Community' variant designed by Tumblr user 'taqwomen' in 2018
+
 --genderqueer
 	Genderqueer pride flag designed by Marilyn Roxie in 2011
 
