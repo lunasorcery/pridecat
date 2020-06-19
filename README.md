@@ -9,6 +9,9 @@ Colorize your terminal output with pride!
 ## Flags
 
 ```
+--aromantic,--aro
+	Aromantic pride flag designed by Tumblr user 'cameronwhimsy' in 2014
+
 --asexual,--ace
 	Asexual pride flag designed by AVEN user 'standup' in 2010
 
@@ -55,6 +58,9 @@ Colorize your terminal output with pride!
 -t,--truecolor
 	Force truecolor output (even if the terminal doesn't seem to support it)
 
+-T,--no-truecolor
+	Force disable truecolor output (even if the terminal does seem to support it)
+
 -h,--help
 	Display the help page
 ```
@@ -73,7 +79,9 @@ This depends on a recent (C++11) C++ compiler being available. If you encounter 
 
 ## Windows support?
 
-Not presently available. It appears to work out-of-the-box in WSL though.
+There's currently no Windows-compatible build setup, but the code should work under the notable windows terminals if you compile it with cl.exe. Tested in cmd, PowerShell, and Windows Terminal.
+
+It also appears to work out-of-the-box in WSL.
 
 ## License
 
