@@ -58,6 +58,12 @@ Colorize your terminal output with pride!
 -f,--force
 	Force color even when stdout is not a tty
 
+-r,--readability-lighten
+	Lighten colors slightly for improved readability on dark backgrounds
+
+-R,--readability-darken
+	Darken colors slightly for improved readability on light backgrounds
+
 -t,--truecolor
 	Force truecolor output (even if the terminal doesn't seem to support it)
 
