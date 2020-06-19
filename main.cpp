@@ -144,6 +144,7 @@ bool isTrueColorTerminal() {
 bool g_useColors = isatty(STDOUT_FILENO);
 bool g_trueColor = isTrueColorTerminal();
 #endif
+bool g_setBackgroundColor = false;
 
 
 bool strEqual(char const* a, char const* b) {
@@ -188,21 +189,55 @@ std::string resolveAlias(const std::string& arg) {
 	return arg;
 }
 
-void setColor(color_t const& color) {
+void setTextColor(color_t const& color) {
 	if (!g_useColors)
 		return;
 
 	if (g_trueColor) {
 		fprintf(stdout, "\033[38;2;%d;%d;%dm", color.r, color.g, color.b);
 	} else {
-		// apparently the default macOS Terminal.app still needs this?? (as of 10.14 Mojave)
 		fprintf(stdout, "\033[38;5;%dm", bestNonTruecolorMatch(color));
 	}
 }
 
+void setBackgroundColor(color_t const& color) {
+	if (!g_useColors)
+		return;
+
+	if (g_trueColor) {
+		fprintf(stdout, "\033[48;2;%d;%d;%dm", color.r, color.g, color.b);
+	} else {
+		fprintf(stdout, "\033[48;5;%dm", bestNonTruecolorMatch(color));
+	}
+}
+
+void resetTextColor() {
+	if (!g_useColors)
+		return;
+
+	fputs("\033[39m", stdout);
+}
+
+void resetBackgroundColor() {
+	if (!g_useColors)
+		return;
+
+	fputs("\033[49m", stdout);
+}
+
+void setColor(color_t const& color) {
+	if (g_setBackgroundColor) {
+		setBackgroundColor(color);
+	} else {
+		setTextColor(color);
+	}
+}
+
 void resetColor() {
-	if (g_useColors) {
-		fputs("\033[39m", stdout);
+	if (g_setBackgroundColor) {
+		resetBackgroundColor();
+	} else {
+		resetTextColor();
 	}
 }
 
@@ -227,16 +262,18 @@ void parseCommandLine(int argc, char** argv) {
 				if (g_useColors) {
 					printf(" ");
 					for (const auto& color : flag.second.colors) {
-						setColor(color);
+						setTextColor(color);
 						printf("█");
 					}
-					resetColor();
+					resetTextColor();
 				}
 				printf("\n");
 				printf("      %s\n\n", flag.second.description.c_str());
 			}
 
 			printf("Additional options:\n");
+			printf("  -b,--background\n");
+			printf("      Change the background color instead of the text color\n\n");
 			printf("  -f,--force\n");
 			printf("      Force color even when stdout is not a tty\n\n");
 			printf("  -t,--truecolor\n");
@@ -260,6 +297,9 @@ void parseCommandLine(int argc, char** argv) {
 		}
 		else if (strEqual(argv[i], "-T") || strEqual(argv[i], "--no-truecolor")) {
 			g_trueColor = false;
+		}
+		else if (strEqual(argv[i], "-b") || strEqual(argv[i], "--background")) {
+			g_setBackgroundColor = true;
 		}
 		else if (strEqual(argv[i], "--")) {
 			finishedReadingFlags = true;
@@ -293,6 +333,9 @@ void abortHandler(int signo) {
 void catFile(FILE* fh) {
 	int c;
 	while ((c = getc(fh)) >= 0) {
+		if (c == '\n') {
+			resetColor();
+		}
 		putc(c, stdout);
 		if (c == '\n') {
 			g_currentRow++;

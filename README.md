@@ -52,6 +52,9 @@ Colorize your terminal output with pride!
 ## Additional options
 
 ```
+-b,--background
+	Change the background color instead of the text color
+
 -f,--force
 	Force color even when stdout is not a tty
 
