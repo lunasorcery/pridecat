@@ -181,24 +181,55 @@ std::string resolveAlias(const std::string& arg) {
 	return arg;
 }
 
-void setColor(color_t const& color) {
+void setTextColor(color_t const& color) {
 	if (!g_useColors)
 		return;
 
-	int const command = g_setBackgroundColor ? 48 : 38;
+	if (g_trueColor) {
+		fprintf(stdout, "\033[38;2;%d;%d;%dm", color.r, color.g, color.b);
+	} else {
+		fprintf(stdout, "\033[38;5;%dm", bestNonTruecolorMatch(color));
+	}
+}
+
+void setBackgroundColor(color_t const& color) {
+	if (!g_useColors)
+		return;
 
 	if (g_trueColor) {
-		fprintf(stdout, "\033[%d;2;%d;%d;%dm", command, color.r, color.g, color.b);
+		fprintf(stdout, "\033[48;2;%d;%d;%dm", color.r, color.g, color.b);
 	} else {
-		// apparently the default macOS Terminal.app still needs this?? (as of 10.14 Mojave)
-		fprintf(stdout, "\033[%d;5;%dm", command, bestNonTruecolorMatch(color));
+		fprintf(stdout, "\033[48;5;%dm", bestNonTruecolorMatch(color));
+	}
+}
+
+void resetTextColor() {
+	if (!g_useColors)
+		return;
+
+	fputs("\033[39m", stdout);
+}
+
+void resetBackgroundColor() {
+	if (!g_useColors)
+		return;
+
+	fputs("\033[49m", stdout);
+}
+
+void setColor(color_t const& color) {
+	if (g_setBackgroundColor) {
+		setBackgroundColor(color);
+	} else {
+		setTextColor(color);
 	}
 }
 
 void resetColor() {
-	if (g_useColors) {
-		int const command = g_setBackgroundColor ? 49 : 39;
-		fprintf(stdout, "\033[%dm", command);
+	if (g_setBackgroundColor) {
+		resetBackgroundColor();
+	} else {
+		resetTextColor();
 	}
 }
 
@@ -223,10 +254,10 @@ void parseCommandLine(int argc, char** argv) {
 				if (g_useColors) {
 					printf(" ");
 					for (const auto& color : flag.second.colors) {
-						setColor(color);
+						setTextColor(color);
 						printf("█");
 					}
-					resetColor();
+					resetTextColor();
 				}
 				printf("\n");
 				printf("      %s\n\n", flag.second.description.c_str());
