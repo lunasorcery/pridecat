@@ -107,7 +107,8 @@ std::map<std::string, flag_t const> allFlags = {
 	{ "new-lesbian", {
 		// info: https://en.wikipedia.org/wiki/LGBT_symbols#Lesbian
 		// colors: https://en.wikipedia.org/wiki/File:Lesbian_pride_flag_2018.svg
-		{ 0xD52D00, 0xEF7627, 0xFF9A56, 0xFFFFFF, 0xD162A4, 0xB55690, 0xA30262 },
+		// second-last color changed from 0xB55690 to 0xB55590 to ensure distinct colors on non-truecolor displays
+		{ 0xD52D00, 0xEF7627, 0xFF9A56, 0xFFFFFF, 0xD162A4, 0xB55590, 0xA30262 },
 		"New lesbian pride flag designed by Emily Gwen in 2018"
 	} },
 
