@@ -1,3 +1,4 @@
+#include <cctype>
 #include <cstdio>
 #include <cstdint>
 #include <cstdlib>
@@ -155,6 +156,8 @@ bool g_useColors = isatty(STDOUT_FILENO);
 bool g_trueColor = isTrueColorTerminal();
 #endif
 bool g_setBackgroundColor = false;
+bool g_changeBlank = false;
+bool g_blankLine = true;
 
 
 bool strEqual(char const* a, char const* b) {
@@ -306,6 +309,8 @@ void parseCommandLine(int argc, char** argv) {
 			printf("Additional options:\n");
 			printf("  -b,--background\n");
 			printf("      Change the background color instead of the text color\n\n");
+			printf("  -c,--change-blank\n");
+			printf("      Change color on blank lines as well\n\n");
 			printf("  -f,--force\n");
 			printf("      Force color even when stdout is not a tty\n\n");
 			printf("  -t,--truecolor\n");
@@ -324,6 +329,9 @@ void parseCommandLine(int argc, char** argv) {
 			printf("  pridecat                Copy stdin to stdout, but with rainbows.\n");
 			printf("  pridecat --trans --bi   Alternate between trans and bisexual pride flags.\n");
 			exit(0);
+		}
+		else if (strEqual(argv[i], "-c") || strEqual(argv[i], "--change-blank")) {
+			g_changeBlank = true;
 		}
 		else if (strEqual(argv[i], "-f") || strEqual(argv[i], "--force")) {
 			g_useColors = true;
@@ -377,15 +385,16 @@ void catFile(FILE* fh) {
 	while ((c = getc(fh)) >= 0) {
 		if (c == '\n') {
 			resetColor();
+			g_blankLine = true;
 		}
-		putc(c, stdout);
-		if (c == '\n') {
-			g_currentRow++;
+		else if (g_blankLine && (g_changeBlank || !isspace(c))) {
+			setColor(g_colorQueue[g_currentRow++]);
 			if (g_currentRow == g_colorQueue.size()) {
 				g_currentRow = 0;
 			}
-			setColor(g_colorQueue[g_currentRow]);
+			g_blankLine = false;
 		}
+		putc(c, stdout);
 	}
 }
 
@@ -425,8 +434,6 @@ int main(int argc, char** argv) {
 	if (g_colorQueue.empty()) {
 		pushFlag(allFlags.at("lgbt"));
 	}
-
-	setColor(g_colorQueue[0]);
 
 	if (g_filesToCat.empty()) {
 		catFile(stdin);

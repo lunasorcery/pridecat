@@ -55,6 +55,9 @@ Colorize your terminal output with pride!
 -b,--background
 	Change the background color instead of the text color
 
+-c,--change-blank
+	Change color on blank lines as well
+
 -f,--force
 	Force color even when stdout is not a tty
 
