@@ -53,7 +53,7 @@ Colorize your terminal output with pride!
 
 ```
 -b,--background
-	Change the background color instead of the text color (implies -c)
+	Change the background color instead of the text color (highlights complete line and implies -c when stdout is a tty)
 
 -c,--change-blank
 	Change color on blank lines as well

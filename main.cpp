@@ -145,16 +145,17 @@ unsigned int g_currentRow = 0;
 colorAdjust g_colorAdjustment = colorAdjust::none;
 
 #if defined(_WIN32)
-bool g_useColors = _isatty(_fileno(stdout));
+bool g_isatty = _isatty(_fileno(stdout));
 bool g_trueColor = true;
 #else
 bool isTrueColorTerminal() {
 	char const* ct = getenv("COLORTERM");
 	return ct ? strstr(ct, "truecolor") || strstr(ct, "24bit") : false;
 }
-bool g_useColors = isatty(STDOUT_FILENO);
+bool g_isatty = isatty(STDOUT_FILENO);
 bool g_trueColor = isTrueColorTerminal();
 #endif
+bool g_useColors = g_isatty;
 bool g_setBackgroundColor = false;
 bool g_changeBlank = false;
 bool g_blankLine = true;
@@ -238,11 +239,12 @@ void setBackgroundColor(color_t const& color) {
 		return;
 
 	color_t const readableColor = adjustForReadability(color);
+	const char * const clearLine = g_isatty ? "\033[2K" : "";
 
 	if (g_trueColor) {
-		fprintf(stdout, "\033[48;2;%d;%d;%dm\033[2K", readableColor.r, readableColor.g, readableColor.b);
+		fprintf(stdout, "\033[48;2;%d;%d;%dm%s", readableColor.r, readableColor.g, readableColor.b, clearLine);
 	} else {
-		fprintf(stdout, "\033[48;5;%dm\033[2K", bestNonTruecolorMatch(readableColor));
+		fprintf(stdout, "\033[48;5;%dm%s", bestNonTruecolorMatch(readableColor), clearLine);
 	}
 }
 
@@ -260,7 +262,9 @@ void resetBackgroundColor() {
 	fputs("\033[49m", stdout);
 }
 
-void setColor(color_t const& color) {
+void nextColor() {
+	color_t const& color = g_colorQueue[g_currentRow];
+	g_currentRow = (g_currentRow + 1) % g_colorQueue.size();
 	if (g_setBackgroundColor) {
 		setBackgroundColor(color);
 	} else {
@@ -308,7 +312,7 @@ void parseCommandLine(int argc, char** argv) {
 
 			printf("Additional options:\n");
 			printf("  -b,--background\n");
-			printf("      Change the background color instead of the text color (implies -c)\n\n");
+			printf("      Change the background color instead of the text color (highlights complete line and implies -c when stdout is a tty)\n\n");
 			printf("  -c,--change-blank\n");
 			printf("      Change color on blank lines as well\n\n");
 			printf("  -C,--no-change-blank\n");
@@ -349,7 +353,9 @@ void parseCommandLine(int argc, char** argv) {
 		}
 		else if (strEqual(argv[i], "-b") || strEqual(argv[i], "--background")) {
 			g_setBackgroundColor = true;
-			g_changeBlank = true;
+			if (g_isatty) {
+				g_changeBlank = true;
+			}
 		}
 		else if (strEqual(argv[i], "-l") || strEqual(argv[i], "--lighten")) {
 			g_colorAdjustment = colorAdjust::lighten;
@@ -387,20 +393,20 @@ void abortHandler(int signo) {
 }
 
 void catFile(FILE* fh) {
-	int c;
+	int c, prev = '\n';
 	while ((c = getc(fh)) >= 0) {
 		if (c == '\n') {
+			if (prev == '\n' && g_changeBlank) {
+				nextColor();
+			}
 			resetColor();
 			g_blankLine = true;
 		}
-		else if (g_blankLine && (g_changeBlank || !isspace(c))) {
-			setColor(g_colorQueue[g_currentRow++]);
-			if (g_currentRow == g_colorQueue.size()) {
-				g_currentRow = 0;
-			}
+		else if (g_blankLine && !isspace(c)) {
+			nextColor();
 			g_blankLine = false;
 		}
-		putc(c, stdout);
+		putc(prev = c, stdout);
 	}
 }
 
