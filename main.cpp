@@ -240,9 +240,9 @@ void setBackgroundColor(color_t const& color) {
 	color_t const readableColor = adjustForReadability(color);
 
 	if (g_trueColor) {
-		fprintf(stdout, "\033[48;2;%d;%d;%dm", readableColor.r, readableColor.g, readableColor.b);
+		fprintf(stdout, "\033[48;2;%d;%d;%dm\033[2K", readableColor.r, readableColor.g, readableColor.b);
 	} else {
-		fprintf(stdout, "\033[48;5;%dm", bestNonTruecolorMatch(readableColor));
+		fprintf(stdout, "\033[48;5;%dm\033[2K", bestNonTruecolorMatch(readableColor));
 	}
 }
 
@@ -308,9 +308,11 @@ void parseCommandLine(int argc, char** argv) {
 
 			printf("Additional options:\n");
 			printf("  -b,--background\n");
-			printf("      Change the background color instead of the text color\n\n");
+			printf("      Change the background color instead of the text color (implies -c)\n\n");
 			printf("  -c,--change-blank\n");
 			printf("      Change color on blank lines as well\n\n");
+			printf("  -C,--no-change-blank\n");
+			printf("      Don't change color on blank lines (the default without -b)\n\n");
 			printf("  -f,--force\n");
 			printf("      Force color even when stdout is not a tty\n\n");
 			printf("  -t,--truecolor\n");
@@ -333,6 +335,9 @@ void parseCommandLine(int argc, char** argv) {
 		else if (strEqual(argv[i], "-c") || strEqual(argv[i], "--change-blank")) {
 			g_changeBlank = true;
 		}
+		else if (strEqual(argv[i], "-C") || strEqual(argv[i], "--no-change-blank")) {
+			g_changeBlank = false;
+		}
 		else if (strEqual(argv[i], "-f") || strEqual(argv[i], "--force")) {
 			g_useColors = true;
 		}
@@ -344,6 +349,7 @@ void parseCommandLine(int argc, char** argv) {
 		}
 		else if (strEqual(argv[i], "-b") || strEqual(argv[i], "--background")) {
 			g_setBackgroundColor = true;
+			g_changeBlank = true;
 		}
 		else if (strEqual(argv[i], "-l") || strEqual(argv[i], "--lighten")) {
 			g_colorAdjustment = colorAdjust::lighten;
