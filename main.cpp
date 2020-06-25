@@ -234,17 +234,17 @@ void setTextColor(color_t const& color) {
 	}
 }
 
-void setBackgroundColor(color_t const& color) {
+void setBackgroundColor(color_t const& color, bool clearLine = g_isatty) {
 	if (!g_useColors)
 		return;
 
 	color_t const readableColor = adjustForReadability(color);
-	const char * const clearLine = g_isatty ? "\033[2K" : "";
+	const char * const clearLineCode = clearLine ? "\033[2K" : "";
 
 	if (g_trueColor) {
-		fprintf(stdout, "\033[48;2;%d;%d;%dm%s", readableColor.r, readableColor.g, readableColor.b, clearLine);
+		fprintf(stdout, "\033[48;2;%d;%d;%dm%s", readableColor.r, readableColor.g, readableColor.b, clearLineCode);
 	} else {
-		fprintf(stdout, "\033[48;5;%dm%s", bestNonTruecolorMatch(readableColor), clearLine);
+		fprintf(stdout, "\033[48;5;%dm%s", bestNonTruecolorMatch(readableColor), clearLineCode);
 	}
 }
 
@@ -301,7 +301,7 @@ void parseCommandLine(int argc, char** argv) {
 				if (g_useColors) {
 					putc(' ', stdout);
 					for (const auto& color : flag.second.colors) {
-						setBackgroundColor(color);
+						setBackgroundColor(color, false);
 						putc(' ', stdout);
 					}
 					resetBackgroundColor();
