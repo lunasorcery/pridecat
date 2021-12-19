@@ -124,6 +124,11 @@ std::map<std::string, flag_t const> allFlags = {
 		{ 0xB57EDC, 0xB57EDC, 0xFFFFFF, 0xFFFFFF, 0x4A8123, 0x4A8123 },
 		"Genderqueer pride flag designed by Marilyn Roxie in 2011"
 	} },
+	{ "mlm", {
+		// TODO: add description and find out creator
+		{ 0x078D70, 0x26CEAA, 0x98E8C1, 0xFFFFFF, 0x7BADE2, 0x5049CC, 0x3D1A78 },
+		"mlm pride flag"
+	} },
 };
 
 std::map<std::string, std::string> aliases = {
@@ -136,6 +141,8 @@ std::map<std::string, std::string> aliases = {
 	{ "enby", "nonbinary" },
 	{ "pink-lesbian", "lipstick-lesbian" },
 	{ "lesbian", "community-lesbian" },
+	{ "les", "community-lesbian" },
+	{ "gay", "mlm" },
 };
 
 std::vector<color_t> g_colorQueue;
