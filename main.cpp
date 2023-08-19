@@ -84,6 +84,13 @@ std::map<std::string, flag_t const> allFlags = {
 		"Aromantic pride flag designed by Tumblr user 'cameronwhimsy' in 2014"
 	} },
 
+	{ "aromantic-asexual", {
+		// info: https://www.lgbtqia.wiki/wiki/Aroace
+		// colors: https://en.wikipedia.org/wiki/File:Aroace_flag.svg (also available from lgbtqia.wiki, but this is higher quality)
+		{ 0xE28C00, 0xECCD00, 0xFFFFFF, 0x62AEDC, 0x203856},
+		"Aromantic-asexual pride flag"
+	} },
+
 	{ "pansexual", {
 		// info: https://majesticmess.com/2018/12/01/interview-creator-of-the-pan-flag/
 		// colors: https://web.archive.org/web/20111103184455/http://pansexualflag.tumblr.com/post/1265215452/hex-color-codes-you-dont-have-to-use-these-exact
@@ -131,6 +138,7 @@ std::map<std::string, std::string> aliases = {
 	{ "bi", "bisexual" },
 	{ "ace", "asexual" },
 	{ "aro", "aromantic" },
+	{ "aroace", "aromantic-asexual"},
 	{ "pan", "pansexual" },
 	{ "nb", "nonbinary" },
 	{ "enby", "nonbinary" },
