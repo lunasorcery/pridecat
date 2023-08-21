@@ -87,8 +87,8 @@ std::map<std::string, flag_t const> allFlags = {
 	{ "aromantic-asexual", {
 		// info: https://www.lgbtqia.wiki/wiki/Aroace
 		// colors: https://en.wikipedia.org/wiki/File:Aroace_flag.svg (also available from lgbtqia.wiki, but this is higher quality)
-		{ 0xE28C00, 0xECCD00, 0xFFFFFF, 0x62AEDC, 0x203856},
-		"Aromantic-asexual pride flag"
+		{ 0xE28C00, 0xECCD00, 0xFFFFFF, 0x62AEDC, 0x203856 },
+		"Aromantic-asexual pride flag designed by Tumblr user 'aroaesflags' in 2018"
 	} },
 
 	{ "pansexual", {
