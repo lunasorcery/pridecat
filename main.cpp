@@ -1,3 +1,4 @@
+#include <cctype>
 #include <cstdio>
 #include <cstdint>
 #include <cstdlib>
@@ -152,17 +153,20 @@ unsigned int g_currentRow = 0;
 colorAdjust g_colorAdjustment = colorAdjust::none;
 
 #if defined(_WIN32)
-bool g_useColors = _isatty(_fileno(stdout));
+bool g_isatty = _isatty(_fileno(stdout));
 bool g_trueColor = true;
 #else
 bool isTrueColorTerminal() {
 	char const* ct = getenv("COLORTERM");
 	return ct ? strstr(ct, "truecolor") || strstr(ct, "24bit") : false;
 }
-bool g_useColors = isatty(STDOUT_FILENO);
+bool g_isatty = isatty(STDOUT_FILENO);
 bool g_trueColor = isTrueColorTerminal();
 #endif
+bool g_useColors = g_isatty;
 bool g_setBackgroundColor = false;
+bool g_changeBlank = false;
+bool g_blankLine = true;
 
 
 bool strEqual(char const* a, char const* b) {
@@ -238,16 +242,17 @@ void setTextColor(color_t const& color) {
 	}
 }
 
-void setBackgroundColor(color_t const& color) {
+void setBackgroundColor(color_t const& color, bool clearLine = g_isatty) {
 	if (!g_useColors)
 		return;
 
 	color_t const readableColor = adjustForReadability(color);
+	const char * const clearLineCode = clearLine ? "\033[2K" : "";
 
 	if (g_trueColor) {
-		fprintf(stdout, "\033[48;2;%d;%d;%dm", readableColor.r, readableColor.g, readableColor.b);
+		fprintf(stdout, "\033[48;2;%d;%d;%dm%s", readableColor.r, readableColor.g, readableColor.b, clearLineCode);
 	} else {
-		fprintf(stdout, "\033[48;5;%dm", bestNonTruecolorMatch(readableColor));
+		fprintf(stdout, "\033[48;5;%dm%s", bestNonTruecolorMatch(readableColor), clearLineCode);
 	}
 }
 
@@ -265,7 +270,9 @@ void resetBackgroundColor() {
 	fputs("\033[49m", stdout);
 }
 
-void setColor(color_t const& color) {
+void nextColor() {
+	color_t const& color = g_colorQueue[g_currentRow];
+	g_currentRow = (g_currentRow + 1) % g_colorQueue.size();
 	if (g_setBackgroundColor) {
 		setBackgroundColor(color);
 	} else {
@@ -302,7 +309,7 @@ void parseCommandLine(int argc, char** argv) {
 				if (g_useColors) {
 					putc(' ', stdout);
 					for (const auto& color : flag.second.colors) {
-						setBackgroundColor(color);
+						setBackgroundColor(color, false);
 						putc(' ', stdout);
 					}
 					resetBackgroundColor();
@@ -313,7 +320,11 @@ void parseCommandLine(int argc, char** argv) {
 
 			printf("Additional options:\n");
 			printf("  -b,--background\n");
-			printf("      Change the background color instead of the text color\n\n");
+			printf("      Change the background color instead of the text color (highlights complete line and implies -c when stdout is a tty)\n\n");
+			printf("  -c,--change-blank\n");
+			printf("      Change color on blank lines as well\n\n");
+			printf("  -C,--no-change-blank\n");
+			printf("      Don't change color on blank lines (the default without -b)\n\n");
 			printf("  -f,--force\n");
 			printf("      Force color even when stdout is not a tty\n\n");
 			printf("  -t,--truecolor\n");
@@ -333,6 +344,12 @@ void parseCommandLine(int argc, char** argv) {
 			printf("  pridecat --trans --bi   Alternate between trans and bisexual pride flags.\n");
 			exit(0);
 		}
+		else if (strEqual(argv[i], "-c") || strEqual(argv[i], "--change-blank")) {
+			g_changeBlank = true;
+		}
+		else if (strEqual(argv[i], "-C") || strEqual(argv[i], "--no-change-blank")) {
+			g_changeBlank = false;
+		}
 		else if (strEqual(argv[i], "-f") || strEqual(argv[i], "--force")) {
 			g_useColors = true;
 		}
@@ -344,6 +361,9 @@ void parseCommandLine(int argc, char** argv) {
 		}
 		else if (strEqual(argv[i], "-b") || strEqual(argv[i], "--background")) {
 			g_setBackgroundColor = true;
+			if (g_isatty) {
+				g_changeBlank = true;
+			}
 		}
 		else if (strEqual(argv[i], "-l") || strEqual(argv[i], "--lighten")) {
 			g_colorAdjustment = colorAdjust::lighten;
@@ -381,19 +401,20 @@ void abortHandler(int signo) {
 }
 
 void catFile(FILE* fh) {
-	int c;
+	int c, prev = '\n';
 	while ((c = getc(fh)) >= 0) {
 		if (c == '\n') {
-			resetColor();
-		}
-		putc(c, stdout);
-		if (c == '\n') {
-			g_currentRow++;
-			if (g_currentRow == g_colorQueue.size()) {
-				g_currentRow = 0;
+			if (prev == '\n' && g_changeBlank) {
+				nextColor();
 			}
-			setColor(g_colorQueue[g_currentRow]);
+			resetColor();
+			g_blankLine = true;
 		}
+		else if (g_blankLine && !isspace(c)) {
+			nextColor();
+			g_blankLine = false;
+		}
+		putc(prev = c, stdout);
 	}
 }
 
@@ -433,8 +454,6 @@ int main(int argc, char** argv) {
 	if (g_colorQueue.empty()) {
 		pushFlag(allFlags.at("lgbt"));
 	}
-
-	setColor(g_colorQueue[0]);
 
 	if (g_filesToCat.empty()) {
 		catFile(stdin);
