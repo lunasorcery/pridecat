@@ -47,6 +47,10 @@ Colorize your terminal output with pride!
 
 --pansexual,--pan
 	Pansexual pride flag designed by Evie Varney in 2010
+	
+--progress-pride,--progress                  
+      Progress pride flag designed by Daniel Quasar in 2018
+
 
 --transgender,--trans
 	Transgender pride flag designed by Monica Helms in 1999
@@ -73,8 +77,16 @@ Colorize your terminal output with pride!
 -T,--no-truecolor
 	Force disable truecolor output (even if the terminal does seem to support it)
 
+-s,--stretch <height>
+      Stretch the flag to a certain height before repeating
+
 -h,--help
 	Display the help page
+```
+
+## Installation (Linux)
+```bash
+curl -s https://raw.githubusercontent.com/lunasorcery/pridecat/main/install.sh | bash
 ```
 
 ## Building
@@ -87,7 +99,18 @@ cd pridecat
 make && make install
 ```
 
-This depends on a recent (C++11) C++ compiler being available. If you encounter issues, please let me know.
+This depends on a recent (C++17) C++ compiler being available. If you encounter issues, please let me know.
+
+## Uninstall (Linux)
+```bash
+rm -f /usr/local/bin/pridecat
+```
+or 
+```
+git clone https://github.com/lunasorcery/pridecat.git
+cd pridecat
+make uninstall
+```
 
 ## Windows support?
 
